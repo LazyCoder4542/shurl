@@ -19,8 +19,7 @@ const createLink = catchAsync(async (req, res, next) => {
     res.status(200).json({
         status: "success",
         data: {
-            id: savedLink._id,
-            ...{body}
+            link: savedLink
 
         }
     })
