@@ -3,6 +3,7 @@ const Link = require("../model/linkModel")
 const { nanoid } = require("nanoid")
 const validator = require("validator")
 const catchAsync = require("../utils/catch-async")
+const AppError = require("../utils/app-error")
 
 const createLink = catchAsync(async (req, res, next) => {
     const {url, label} = req.body
@@ -12,15 +13,15 @@ const createLink = catchAsync(async (req, res, next) => {
             message: "Invalid URL"
         })
     }
-    let newLink = new Link({url, label, short_url: nanoid(10)})
+    let body = {url, label, short_url: nanoid(10), user_id: req.user_id, created_at: Date.now()}
+    let newLink = new Link(body)
     const savedLink = await newLink.save()
     res.status(200).json({
         status: "success",
         data: {
             id: savedLink._id,
-            url,
-            label,
-            short_url: savedLink.short_url,
+            ...{body}
+
         }
     })
 })
@@ -36,4 +37,14 @@ const getLinkByID = catchAsync(async (req, res) => {
     })
 })
 
-module.exports = {createLink, getLinkByID}
+const getLinksByUser = catchAsync(async (req, res) => {
+    const links = await Link.find({user_id: req.user_id}).select("-user_id")
+
+    res.status(200).json({
+        status: "success",
+        data: {
+            links
+        }
+    })
+})
+module.exports = {createLink, getLinkByID, getLinksByUser}

@@ -54,7 +54,7 @@ const errorController = (err, req, res, next) => {
         if (err.code === 11000) error = handleDuplicateFieldsDB(error)
         if (err.name === "ValidationError") error = handleValidationErrorDB(error)
         if (err.name in ["JsonWebTokenError", "TokenExpiredError"]) error = handleJWTError(error)
-        sendErroProd(err, res)
+        sendErroProd(error, res)
     }
 }
 

@@ -1,10 +1,13 @@
+const bcrypt = require('bcryptjs');
 const userSchema = require("../schemas/user");
-
+const { model } = require("mongoose")
 userSchema.pre("save", async function(next) {
     if (this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 12);
-        this.passwordChangedAt = new Date();
         this.confirm_password = undefined
+        if (!this.isNew) {
+            this.passwordChangedAt = new Date() - 1000;
+        }
     }
     next()
 })

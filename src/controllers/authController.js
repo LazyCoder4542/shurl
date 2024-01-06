@@ -1,6 +1,6 @@
-import User from "../model/userModel"
-import AppError from "../utils/app-error"
-import catchAsync from "../utils/catch-async"
+const User = require("../model/userModel")
+const AppError = require("../utils/app-error")
+const catchAsync = require("../utils/catch-async")
 
 const { promisify } = require("util")
 const jwt = require("jsonwebtoken")
@@ -18,7 +18,7 @@ const createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id)
     const cookieOptions = {
         expires: new Date (
-            Date.now() + parseInt(preocess.env.JWT_COOKIE_EXPIRES_IN_DAYS) * 24 * 3600 * 1000
+            Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRES_IN_DAYS) * 24 * 3600 * 1000
         ),
         httpOnly: true
     }
@@ -74,6 +74,8 @@ const protect = catchAsync(async (req, res, next) => {
     if (user.isPasswordChangedAfter(decoded.iat)) {
         throw new AppError("User recently changed password! Please log in again", 401)
     }
+
+    req.user_id = decoded.id
 
     next()
 })
@@ -132,3 +134,5 @@ const forgotPassword = catchAsync(async (req, res) => {
         message: "password reset link sent to email!"
     })
 })
+
+module.exports = { signup, login, protect, resetPassword, forgotPassword}
