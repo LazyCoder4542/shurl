@@ -30,6 +30,7 @@ const sendErrorDev = (err, res) => {
 }
 
 const sendErroProd = (err, res) => {
+    console.log(err)
     if (err.isOperational) {
         res.status(err.statusCode).json({
             status: err.status,
@@ -39,7 +40,7 @@ const sendErroProd = (err, res) => {
     else {
         res.status(500).json({
             status: 'error',
-            message: err.message || "An unknown error occured"
+            message: err.message || "An unknown error occurred"
         })
     }
 }

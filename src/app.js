@@ -1,5 +1,7 @@
 const bodyParser = require("body-parser")
 const app = require("express")()
+
+const morgan = require("morgan")
 const crypto = require('crypto')
 const { promisify } = require("util")
 
@@ -7,6 +9,8 @@ const { promisify } = require("util")
 const Link = require("./model/linkModel")
 const apiRouter = require("./routers/api-route");
 const errorController = require("./controllers/errorController");
+
+app.use(morgan("dev"))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
